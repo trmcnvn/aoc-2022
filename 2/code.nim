@@ -68,5 +68,6 @@ proc part_two(input: seq[string]): int =
       else:
         score
   score
+
 echo part_two(test_input)
 echo part_two(real_input)
