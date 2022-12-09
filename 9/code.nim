@@ -1,4 +1,4 @@
-import std/[strutils, sets]
+import std/[strutils, sets, sequtils]
 
 let test_input = readFile("test.txt").strip().split("\n")
 let real_input = readFile("input.txt").strip().split("\n")
@@ -32,37 +32,9 @@ proc update_tail(head: Coord, tail: Coord): Coord =
   elif head[0] < tail[0] and head[1] > tail[1]:
     return tail + (-1, 1)
 
-proc part_one(input: seq[string]): int =
+proc problem(input: seq[string], size: int): int =
   var head_position = (0, 0)
-  var tail_position = (0, 0)
-  var visited = initHashSet[Coord]()
-  for row in input:
-    let instruction = row.split(" ")
-    let moves = instruction[1].parseInt()
-    let direction = case instruction[0]:
-      of "L":
-        (-1, 0)
-      of "R":
-        (+1, 0)
-      of "U":
-        (0, -1)
-      of "D":
-        (0, +1)
-      else:
-        (0, 0)
-    for _ in 0..moves - 1:
-      head_position += direction
-      tail_position = update_tail(head_position, tail_position)
-      visited.incl(tail_position)
-  visited.len
-
-echo part_one(test_input)
-echo part_one(real_input)
-
-proc part_two(input: seq[string]): int =
-  var head_position = (0, 0)
-  var tail_positions: array[9, Coord]
-  for t in tail_positions.mitems: t = (0, 0)
+  var tail_positions = toSeq(1..size).mapIt((0, 0))
   var visited = initHashSet[Coord]()
   for row in input:
     let instruction = row.split(" ")
@@ -87,6 +59,13 @@ proc part_two(input: seq[string]): int =
         tail_positions[n] = tail
       visited.incl(tail_positions[^1])
   visited.len
+
+proc part_one(input: seq[string]): int = problem(input, 1)
+
+echo part_one(test_input)
+echo part_one(real_input)
+
+proc part_two(input: seq[string]): int = problem(input, 9)
 
 echo part_two(test_input)
 echo part_two(real_input)
